@@ -1,6 +1,10 @@
 # Medical Inspector 3D - PAF Télécom Paris
 Graphical User Interface to visualize 3D medical images in NIfTI format. There are also several integrated segmentation and graph clustering methods.
 
+Main Interface|Segmentation Plugin|User Manual
+:---:|:---:|:---:
+![](/Screenshots/app.png)|![](/Screenshots/segmentation.png)|![](/Screenshots/manual.png)
+
 Here is the required list of libraries (for python3):
 - tkinter 
 - nibabel
