@@ -45,3 +45,9 @@ To run the app:
 cd Medical-Inspector
 python main.py
 ```
+
+## Authors
+
+Members of the project:
+
+Anna Audit - Clément Galaup - Hugo Queinnec - Nicolas Wittmann - Philippe Liu - Pierre Piovesan - Thomas Poyet
