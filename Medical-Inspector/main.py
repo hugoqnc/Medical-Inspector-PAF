@@ -30,7 +30,7 @@ center(window)
 window.configure(bg='black')
 window.update()
 
-if (os.name=='nt'): #Pour afficher une icone 
+if (os.name=='nt'): #Pour afficher une icone
     window.iconbitmap(view.ConstantFiles.logoWindows)
 else:
     window.iconbitmap(view.ConstantFiles.logoLinux)
