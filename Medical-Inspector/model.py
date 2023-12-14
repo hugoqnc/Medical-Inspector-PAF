@@ -540,7 +540,6 @@ class Model :
         if (self.shapeLeaders[0] and self.shapeLeaders[1] and self.shapeLeaders[2]) : #IRM, segmentation et graph chargés
             if optionNumber == 0 :
                 self.listeners['Generate Clusters'].success()
-                print(self.rag)
                 if (self.loadSegmentationMat(controller.GraphClustering.louvain(self.rag, self.segmentation))) :
                     self.setSegFileName('generated', '')
                     self.listeners['imagePanel'].home.updateImagePanel()

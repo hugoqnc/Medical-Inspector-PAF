@@ -182,8 +182,6 @@ class GraphClustering :
     def louvain(cls, g, labels):
         x, y, z=labels.shape
         t = sparse.csr_matrix(cls.ragToAdjacencyMatrix(g,'similarity'))
-        print(t.data, t, type(t))
-        t.data.astype(float)
         louvain = Louvain()
         l = louvain.fit_transform(t)
         rep = labels.copy()
