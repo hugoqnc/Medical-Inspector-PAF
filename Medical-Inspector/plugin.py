@@ -100,7 +100,7 @@ class Plugin : #cette classe facilite l'implementation de nouveaux boutons dans 
         self.buttonPlugin['state'] = 'normal'
         self.newWindow.destroy()
 
-    
+
     def newChoice(self, event):
         if (self.buttonsFrame!=None):
             self.buttonsFrame.destroy()
@@ -144,7 +144,7 @@ class Plugin : #cette classe facilite l'implementation de nouveaux boutons dans 
 
         except(ValueError):
             self.failure('Please only write numbers in text fields. Be sure to use a dot "." and not a comma "," for decimals.', False)
-            
+
         else:
             #on execute donc la fonction du modele
             self.function(self.current, floatFieldResultList)

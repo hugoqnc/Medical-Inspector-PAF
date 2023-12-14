@@ -2,6 +2,7 @@
 import numpy as np
 import nibabel as nib
 from scipy import ndimage as ndi
+from scipy import sparse
 from skimage.segmentation import watershed, slic
 from skimage.feature import peak_local_max
 from skimage.future import graph
@@ -54,7 +55,7 @@ class Segmentation : #Normalements la numerotation des segments commence à 1
         #array_data = labels
         #print(np.min(labels))
         return labels if np.min(labels) == 1 else labels + 1
-    
+
     watershedMinima3D = classmethod(watershedMinima3D)
 
     def watervoxel3D(cls, data, a, gradient_threshold, gradient_size, footprint_median, footprint_gaussian, sigma):
@@ -88,7 +89,7 @@ class Segmentation : #Normalements la numerotation des segments commence à 1
         #array_data = labels
         #print(np.min(labels))
         return labels if np.min(labels) == 1 else labels + 1
-    
+
     watervoxel3D = classmethod(watervoxel3D)
 
 
@@ -98,10 +99,10 @@ class GraphGeneration :
         mat = np.copy(labels) + 1 if np.min(labels) == 0 else np.copy(labels)
         g = graph.rag_mean_color(data, mat, connectivity = 2)
         props = regionprops(mat)
-        labelsToIndex = cls.labelsToPropsIndex(props)        
+        labelsToIndex = cls.labelsToPropsIndex(props)
         cls.addData(g, data.shape, sigma,props, labelsToIndex)
         return g
-    
+
     meanColorRAG = classmethod(meanColorRAG)
 
     def boundaryRAG(cls, data, labels, sigma) :
@@ -110,7 +111,7 @@ class GraphGeneration :
         g = graph.rag_boundary(mat, edges, connectivity = 2)
         props = regionprops(mat)
         labelsToIndex = cls.labelsToPropsIndex(props)
-        cls.addData(g, data.shape, sigma,props, labelsToIndex) 
+        cls.addData(g, data.shape, sigma,props, labelsToIndex)
         return g
 
     boundaryRAG = classmethod(boundaryRAG)
@@ -125,7 +126,7 @@ class GraphGeneration :
 
     def addData(cls, g, shape, sigma, props, labelsToIndex) :
         g.graph['shape'] = shape
-        
+
         max=0
         for (u, v) in g.edges():
             s1 = labelsToIndex.index(u)
@@ -153,16 +154,18 @@ class GraphGeneration :
 
             s = np.exp(-d5**2/sigma)
             g.add_edge(u, v, similarity = s)
-        
-        g.graph['maxD'] = max 
+
+        g.graph['maxD'] = max
 
         for n in g:
             i = labelsToIndex.index(n)
             g.add_node(n, centroid=props[i].centroid)
-    
+
     addData = classmethod(addData)
 
-    
+
+class AdjacencyMatrixFix(object): # fixing an error
+    pass
 
 class GraphClustering :
     def ragToAdjacencyMatrix(cls, g, distance): #écrire sous la forme 'weight' distance
@@ -173,13 +176,13 @@ class GraphClustering :
             mat[s1-1,s2-1]=val
             mat[s2-1,s1-1]=val
         return mat
-    
+
     ragToAdjacencyMatrix = classmethod(ragToAdjacencyMatrix)
 
     def louvain(cls, g, labels):
         x, y, z=labels.shape
-        t = cls.ragToAdjacencyMatrix(g,'similarity')
-        louvain = Louvain() 
+        t = sparse.csr_matrix(cls.ragToAdjacencyMatrix(g,'similarity'))
+        louvain = Louvain()
         l = louvain.fit_transform(t)
         rep = labels.copy()
         for k in range(x):
@@ -187,7 +190,7 @@ class GraphClustering :
                 for i in range(z):
                     rep[k,j,i]=l[labels[k,j,i]-1]
         return rep
-    
+
     louvain = classmethod(louvain)
 
     def spectralClustering(cls, g, labels, n):
@@ -200,7 +203,7 @@ class GraphClustering :
                 for i in range(z):
                     rep[k,j,i]=l[labels[k,j,i]-1]
         return rep
-    
+
     spectralClustering = classmethod(spectralClustering)
 
 
@@ -217,5 +220,5 @@ class SharedFunctions() :
     def threshold(cls, mat, gradient_threshold):
         ret,thresh = cv.threshold(mat,gradient_threshold,255,cv.THRESH_BINARY_INV)
         return thresh
-    
+
     threshold = classmethod(threshold)

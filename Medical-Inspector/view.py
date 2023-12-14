@@ -79,7 +79,7 @@ class ImagePanel:
     rotation = 0 #on tourne l'image de rotation*90 degres, avec rotation=0,1,2,3
     zoomState = 0 #vaut 0 sans zoom, 1 si on est en mode zoom sur l'image
     zoomBox = [0,0,0,0] #stocke les coordonnes des 2 points qui forment le rectangle sur lequel on zoom
-    
+
     title3DImages = None #references sur les labels du haut de l'imagePanel
     titleSegmentation = None
     titleGraph = None
@@ -89,7 +89,7 @@ class ImagePanel:
 
         #La vue se déclare auprès du modele
         self.home.model.listeners['imagePanel'] = self
-        
+
         #creation du frame principal
         self.imageFrame = Frame(master, bg=ConstantFiles.darkGrey)
         self.imageFrame.pack(fill=BOTH, expand=True, side=RIGHT)
@@ -103,7 +103,7 @@ class ImagePanel:
         else :
             self.title3DImages = Label(topFrame, bg=ConstantFiles.darkGrey, font = "Helvetica 12 bold", fg='white', text=('3D Medical Images : ' + home.model.fileName))
         self.title3DImages.grid(row=0,column=0, sticky=W, padx = 10)
-        
+
         if(home.model.segPath=='generated' and home.model.segFileName==''): #disjonction de cas sur l'affichage du label au dessus de l'image
             self.titleSegmentation = Label(topFrame, bg=ConstantFiles.darkGrey, font = "Helvetica 12 bold", fg='yellow', text=('Segmentation : Generated [unsaved]'))
         elif(home.model.segFileName==''):
@@ -127,7 +127,7 @@ class ImagePanel:
 
         rotateButton = ButtonPlus(topFrame, text="rotate", image = ConstantFiles.icoRotate, command=(lambda: self.displayRotatedImage()))
         rotateButton.grid(row=1,column=1, sticky=E, padx = 10)
-        
+
         self.imageSize = int((1/2)*self.home.windowHeight)
 
 
@@ -138,7 +138,7 @@ class ImagePanel:
         self.canvas = Canvas(middleFrame, width = self.imageSize, height = self.imageSize, cursor='plus', bg=ConstantFiles.darkGrey, highlightbackground=ConstantFiles.darkGrey)
         #on cree le label qui affichera le num de la region :
         self.regionLabel = Label(middleFrame, bg=ConstantFiles.darkGrey, font = "Helvetica 10", fg='black', text=('Region : '))
-        
+
         self.canvas.bind('<Button-1>', self.zoomIn) #relie les clicks sur l'image aux actions donnes dans le manuel utilisateur
         self.canvas.bind('<Button-2>', self.zoomOut)
         self.canvas.bind('<Leave>', self.hideDisplayLabel)
@@ -187,7 +187,7 @@ class ImagePanel:
         sep.pack(anchor="nw", fill=X, padx=20, pady=15)
 
 
-        
+
     def showMeHelp(self): #affiche la fentre d'aide avec le manuel utilisateur
         #c'est le contenu de cette fonction qu'il faut modifier si on souhaite modifier le manuel utilisateur
 
@@ -195,7 +195,7 @@ class ImagePanel:
         newWindow = Tk()
         newWindow.title('User Manual - Medical Inspector 3D')
         newWindow.geometry("540x400")
-        newWindow.resizable(True, True)  #on peut etendre la fenetre 
+        newWindow.resizable(True, True)  #on peut etendre la fenetre
         self.center(newWindow) #centre la fenetre dans l'ecran avec une fonction custom
 
         newWindow.configure(bg='white')
@@ -329,7 +329,7 @@ class ImagePanel:
 
         T.config(state=DISABLED) #empeche la modification du texte
 
-        newWindow.mainloop() 
+        newWindow.mainloop()
 
         return
 
@@ -360,7 +360,7 @@ class ImagePanel:
             self.canvas.image = ImageTk.PhotoImage(image = image.resize((self.imageSize, self.imageSize), box=self.zoomBox))
             self.canvas.create_image(self.imageSize/2,self.imageSize/2, image=self.canvas.image)
         else:
-            self.canvas.image = ImageTk.PhotoImage(image = self.home.model.displayedImg.resize((self.imageSize, self.imageSize), Image.ANTIALIAS).rotate(self.rotation*(-90)))
+            self.canvas.image = ImageTk.PhotoImage(image = self.home.model.displayedImg.resize((self.imageSize, self.imageSize), Image.LANCZOS).rotate(self.rotation*(-90)))
             self.canvas.create_image(self.imageSize/2,self.imageSize/2, image=self.canvas.image)
 
         return
@@ -453,24 +453,24 @@ class ImagePanel:
                 pointedRegion = self.home.model.segmentation[i, j, k]
             except:
                 pointedRegion = 0.0
-            
+
             self.regionLabel['text'] = 'Region : ' + str(pointedRegion) + " (i = " + str(i) + ', j = ' + str(j) + ", k = " + str(k) + ')'
             self.regionLabel['bg'] = 'white'
             self.regionLabel.grid()
-        
+
 
 class CommandPanel:
-    
+
     commandFrame = None #frame principale qui va contenir les boutons
     commandFrameGrid = None #frame inferieure qui sera mise en forme par un .grid()
     layerOptionsFrame = None #frame tout en bas qui va contenir les options de segmentation
     home = None
     padLeft = 15 #valeur du padding telle que tous les boutons aient la meme valeur a gauche de la fenetre
-    
+
     def __init__(self, master, home):
-        
+
         self.home = home
-        
+
         #La vue se déclare auprès du modele
         self.home.model.listeners['commandPanel'] = self
 
@@ -479,31 +479,31 @@ class CommandPanel:
         self.commandFrame.pack(fill = BOTH, side = LEFT,pady = 30, padx = 30)
 
         self.layerOptionsFrame = LayerButtons(self.commandFrame, home)
-        
+
         self.commandFrameGrid = Frame(self.commandFrame, bg=ConstantFiles.lightGrey)
         self.commandFrameGrid.pack()
-        
+
         #titre
         title = Label(self.commandFrameGrid, text='Commands', font = "Helvetica 16 bold", bg=ConstantFiles.lightGrey)
         title.grid(row=0,column=0, sticky=W, padx = 40, pady=20)
-        
+
         #creation des boutons
         #on utilise un Frame dans lequel on peut mettre un boutons, plus 2 boutons pour save et delete a droite du bouton principal
         b1Frame = Frame(self.commandFrameGrid, bg=ConstantFiles.lightGrey) #1ere ligne de boutons
         b1Frame.grid(row=1,column=0, sticky=W, padx = self.padLeft-7, pady = 10)
-        
-        b1 = ButtonPlus(b1Frame, text="Load 3D Image", command=(lambda :self.load3DImage())) 
+
+        b1 = ButtonPlus(b1Frame, text="Load 3D Image", command=(lambda :self.load3DImage()))
         b1.colors() #affiche les bonnes couleurs pour le bouton
         b1.grid(row=0,column=0, sticky=W, padx=7)
 
         b1Del = ButtonPlus(b1Frame, text="X", image=ConstantFiles.icoCross, command=(lambda :self.remove3DImage()))
         b1Del.colors()
         b1Del.grid(row=0,column=2, sticky=W, padx = 0)
-        
-        
+
+
         b2Frame = Frame(self.commandFrameGrid, bg=ConstantFiles.lightGrey) #2eme ligne de boutons
         b2Frame.grid(row=2,column=0, sticky=W, padx = self.padLeft-7, pady = 10)
-        
+
         b2 = ButtonPlus(b2Frame, text="Load Segmentation", command=(lambda :self.loadSegmentation()))
         b2.colors()
         b2.grid(row=0,column=0, sticky=W, padx=7)
@@ -511,7 +511,7 @@ class CommandPanel:
         b2Save = ButtonPlus(b2Frame, text="S", image=ConstantFiles.icoSave, command=(lambda :self.saveSegmentation()))
         b2Save.colors()
         b2Save.grid(row=0,column=1, sticky=W, padx = 0)
-        
+
         b2Del = ButtonPlus(b2Frame, text="X", image=ConstantFiles.icoCross, command=(lambda :self.removeSegmentation()))
         b2Del.colors()
         b2Del.grid(row=0,column=2, sticky=W, padx = 0)
@@ -519,7 +519,7 @@ class CommandPanel:
 
         b3Frame = Frame(self.commandFrameGrid, bg=ConstantFiles.lightGrey) #3eme ligne de boutons
         b3Frame.grid(row=3,column=0, sticky=W, padx = self.padLeft-7, pady = 10)
-        
+
         b3 = ButtonPlus(b3Frame, text="Load Graph", command=(lambda :self.loadGraph()))
         b3.colors()
         b3.grid(row=0,column=0, sticky=W, padx=7)
@@ -532,9 +532,9 @@ class CommandPanel:
         b3Del.colors()
         b3Del.grid(row=0,column=2, sticky=W, padx = 0)
 
-       
+
         #apres les 3 premieres lignes de boutons, s'ajoutent les boutons de plugin
-        #on cree automatiquement un bouton en creant une instance de Plugin 
+        #on cree automatiquement un bouton en creant une instance de Plugin
         plugin.Plugin('Generate Segmentation', 4, self.home.model.segmentationPlugin, ['SLIC3D', 'WatershedGradient3D', 'WatershedMinima3D', 'Watervoxel3D'], [['Number of segments (integer)', 'Sigma (decimal)'], ['Gradient Threshold (integer)', 'Gradien Size (integer)', 'Footprint Median (integer)'], ['Footprint Gaussian (integer)', 'Sigma (decimal)'], ['a ∈ ]0,1[ (decimal)', 'Gradient Threshold (integer)', 'Gradient Size (integer)', 'Footprint Median (integer)', 'Footprint Gaussian (integer)', 'Sigma (decimal)']], [[5000, 0.01], [18, 5, 1], [20, 0.5], [0.9, 18, 5, 1, 25, 0.5]], self, self.home.model)
         plugin.Plugin('Generate Graph', 5, self.home.model.graphGenerationPlugin, ['Mean Color', 'Boundary'], [['Sigma (decimal)', 'Draw graph (0 if no)'], ['Sigma (decimal)', 'Draw graph (0 if no)']], [[2500, 1], [2500, 1]], self, self.home.model)
         plugin.Plugin('Generate Clusters', 6, self.home.model.graphClusteringPlugin, ['Louvain', 'Spectral Clustering'], [[], ['Number of clusters (int)']], [[], [80]], self, self.home.model)
@@ -545,10 +545,10 @@ class CommandPanel:
         bX.colors()
         #bX.grid(row=7,column=0, sticky=W, padx = self.padLeft, pady = 10)
         self.layerOptionsFrame.showLayerOptions(bX) #macOS version
-        
-        
-        
-        
+
+
+
+
     def load3DImage(self):
         #ouvre une fenetre de dialogue pour ouvrir un fichier du bon format
         completePath = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("nii files","*.gz"),("all files","*.*")))
@@ -563,7 +563,7 @@ class CommandPanel:
                 self.home.model.createBgMat(path, fileName)
                 self.home.updateImagePanel()
         return
-        
+
     def loadSegmentation(self):
         #ouvre une fenetre de dialogue pour ouvrir un fichier du bon format
         completePath = filedialog.askopenfilename(initialdir = "/",title = "Select segmentation file",filetypes = (("nii files","*.gz"),("all files","*.*")))
@@ -615,7 +615,7 @@ class CommandPanel:
         self.home.updateImagePanel()
         return
 
-    
+
     def saveSegmentation(self): #lorsqu'on clique sur le bouton save, ouvre une fentre de dialogue pour sauvegarder
         toSave = self.home.model.checkIfSegToSave()
         if(toSave): #verifie s'il y a bien qqch a sauvegarder
@@ -655,9 +655,9 @@ class CommandPanel:
             else:
                 self.home.popup.info('Nothing to save', 'The displayed graph file is already saved. You can only save generated graph files.')
         return
-        
-        
-       
+
+
+
 
 class LayerButtons:
 
@@ -724,7 +724,7 @@ class LayerButtons:
         self.home.model.buttonActionLayer(layerId)
         self.buttonManagement()
         return
-    
+
     def displaySegmentation(self, button): #affiche la segmentation et le curseur alpha
         layerId = int(button['text'])
         self.home.model.buttonActionLayer(layerId)
@@ -774,21 +774,21 @@ class Popup: #classe qui facilite la creation de popup/messagebox
 
 class ConstantFiles: #classe qui contient toutes les constantes
     #les constantes numeriques sont donnees directement, les autres son calculees par l'initialisation des variables de classes avec start
-    
+
     #tailles d'icones
     iconSize = 40
     iconSizeMedium = 30
     iconSizeSmall = 20
-    
+
     #logos de la fenetre
     logoWindows = 'icons_flat/logo.ico'
     logoLinux = '@icons_flat/logo.xbm'
-    
+
     #icone des layers options
     icoStandard = None
     icoSegmentation = None
     icoGraph = None
-    
+
     #icones du image Panel
     icoSizeRefresh = None
     icoRotate = None
@@ -802,7 +802,7 @@ class ConstantFiles: #classe qui contient toutes les constantes
     lightGrey = 'grey80'
     middleGrey = 'grey30'
     darkGrey = 'black'
-    
+
     buttonRaised = 'grey95'
     buttonSunken = 'grey65'
 
@@ -811,16 +811,16 @@ class ConstantFiles: #classe qui contient toutes les constantes
     zoomFactor = 3 #facteur de multiplication du zoom
 
     def start(cls) : #initialisations
-        cls.icoStandard = ImageTk.PhotoImage(Image.open('icons_flat/standard.png').resize((cls.iconSize, cls.iconSize), Image.ANTIALIAS))
-        cls.icoSegmentation = ImageTk.PhotoImage(Image.open('icons_flat/segmentation.png').resize((cls.iconSize, cls.iconSize), Image.ANTIALIAS))
-        cls.icoGraph = ImageTk.PhotoImage(Image.open('icons_flat/graph.png').resize((cls.iconSize, cls.iconSize), Image.ANTIALIAS))
+        cls.icoStandard = ImageTk.PhotoImage(Image.open('icons_flat/standard.png').resize((cls.iconSize, cls.iconSize), Image.LANCZOS))
+        cls.icoSegmentation = ImageTk.PhotoImage(Image.open('icons_flat/segmentation.png').resize((cls.iconSize, cls.iconSize), Image.LANCZOS))
+        cls.icoGraph = ImageTk.PhotoImage(Image.open('icons_flat/graph.png').resize((cls.iconSize, cls.iconSize), Image.LANCZOS))
 
-        cls.icoSizeRefresh = ImageTk.PhotoImage(Image.open('icons_flat/sizeRefresh.png').resize((43, 24), Image.ANTIALIAS))
-        cls.icoRotate = ImageTk.PhotoImage(Image.open('icons_flat/rotate.png').resize((43, 24), Image.ANTIALIAS))
+        cls.icoSizeRefresh = ImageTk.PhotoImage(Image.open('icons_flat/sizeRefresh.png').resize((43, 24), Image.LANCZOS))
+        cls.icoRotate = ImageTk.PhotoImage(Image.open('icons_flat/rotate.png').resize((43, 24), Image.LANCZOS))
 
-        cls.icoCross = ImageTk.PhotoImage(Image.open('icons_flat/cross.png').resize((cls.iconSizeSmall, cls.iconSizeSmall), Image.ANTIALIAS))
-        cls.icoSave = ImageTk.PhotoImage(Image.open('icons_flat/save.png').resize((cls.iconSizeSmall, cls.iconSizeSmall), Image.ANTIALIAS))
+        cls.icoCross = ImageTk.PhotoImage(Image.open('icons_flat/cross.png').resize((cls.iconSizeSmall, cls.iconSizeSmall), Image.LANCZOS))
+        cls.icoSave = ImageTk.PhotoImage(Image.open('icons_flat/save.png').resize((cls.iconSizeSmall, cls.iconSizeSmall), Image.LANCZOS))
 
-        cls.icoHelp = ImageTk.PhotoImage(Image.open('icons_flat/help.png').resize((cls.iconSizeMedium, cls.iconSizeMedium), Image.ANTIALIAS))
+        cls.icoHelp = ImageTk.PhotoImage(Image.open('icons_flat/help.png').resize((cls.iconSizeMedium, cls.iconSizeMedium), Image.LANCZOS))
 
     start = classmethod(start)

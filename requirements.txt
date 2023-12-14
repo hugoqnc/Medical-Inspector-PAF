@@ -1,0 +1,10 @@
+scikit-network==0.25 # ==0.17.0 not available anymore..
+opencv-python
+scikit-image==0.19.2
+numpy
+scipy
+scikit-learn
+nibabel
+matplotlib
+pillow
+networkx
